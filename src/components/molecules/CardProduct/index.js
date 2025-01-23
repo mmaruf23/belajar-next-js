@@ -35,7 +35,7 @@ function Footer({ price }){
   return (
     <div className='flex flex-col items-center justify-center px-5 pb-5'>
       <span className='text-2xl font-semibold mb-2'>{price}</span>
-      <Button className="bg-gradient-aigen w-full text-white">Beli</Button>
+      <Button buttonClassname="bg-gradient-aigen w-full text-white">Beli</Button>
     </div>
   )
 }

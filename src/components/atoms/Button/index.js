@@ -1,7 +1,7 @@
-function Button(props) {
+function Button({buttonClassname, type, children, onClick = () => {}}) {
   return (
-    <button className={`h-10 px-6 font-semibold rounded ${props.className}`}>
-      {props.children}
+    <button onClick={onClick} type={type} className={`h-10 px-6 font-semibold rounded ${buttonClassname}`}>
+      {children}
     </button>
   );
 }

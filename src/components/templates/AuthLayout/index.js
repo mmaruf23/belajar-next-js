@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 
-const AuthLayout = ({ title, desc, children, type = "register" }) => {
+const AuthLayout = ({ title, desc, children, type = 'register' }) => {
   return (
     <>
       <div className="rounded-lg bg-gradient-aigen p-1 shadow-xl">
@@ -9,10 +9,18 @@ const AuthLayout = ({ title, desc, children, type = "register" }) => {
           <h1 className="text-3xl font-bold mb-2 text-blue-500">{title}</h1>
           <p className="font-medium text-slate-500 mb-4">{desc}</p>
           {children}
-
-          {/* {Cara 2} */}
+          <p className="text-sm text-center mt-2">
+            Dont have an account?{' '}
+            <Link
+              className="text-blue-500 hover:text-blue-700"
+              href="/register"
+            >
+              Register Here
+            </Link>
+          </p>
+          {/* {Cara 1} */}
           {type == 'register' ? (
-            <p className="text-sm text-center mt-2">
+            <p className="text-sm text-center mt-2 text-red-500">
               Already have an account?{' '}
               <Link className="text-blue-500 hover:text-blue-700" href="/login">
                 Register

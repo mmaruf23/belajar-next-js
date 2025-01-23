@@ -1,23 +1,41 @@
-import Button from '@/components/atoms/Button'
-import InputForm from '@/components/molecules/InputForm'
-import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
+import Button from '@/components/atoms/Button';
+import InputForm from '@/components/molecules/InputForm';
+import React from 'react';
 
 const Login = () => {
-  return (
-    <form>
-        <InputForm label="Username" name="username" type="text" placeholder="Masukkan Username" />
-        <InputForm label="Password" name="password" type="password" placeholder="Masukkan Password " />
-        <Button buttonClassname="bg-gradient-hover text-white w-full mt-4">Login</Button>
-        <p className="text-sm text-center mt-2">
-            Dont have an account?{" "}
-            <Link className="text-blue-500 hover:text-blue-700" href="/register">
-            Register Here
-            </Link>
-        </p>
-    </form>
-  )
-}
+  function handleLogin(event) {
+    event.preventDefault();
+    console.log('Klik button!');
 
-export default Login
+    //simpan data form ke localStorage - browser.
+    
+    localStorage.setItem('username', event.target.username.value);
+    localStorage.setItem('password', event.target.password.value);
+
+    window.location.href = '/products';
+  }
+  return (
+    <form onSubmit={handleLogin}>
+      <InputForm
+        label="Username"
+        name="username"
+        type="text"
+        placeholder="Masukkan Username"
+      />
+      <InputForm
+        label="Password"
+        name="password"
+        type="password"
+        placeholder="Masukkan Password "
+      />
+      <Button
+        buttonClassname="bg-gradient-hover text-white w-full mt-4"
+        type="submit"
+      >
+        Login
+      </Button>
+    </form>
+  );
+};
+
+export default Login;
