@@ -16,7 +16,7 @@ const CardProduct = ({ children }) => {
 function Header({ image }) {
   return (
     <Link href="#">
-      <Image src={image} alt="card image" className="p-4 rounded-t-lg" width={300} height={300} />
+      <Image src={image} alt="card image" className="p-4" width={300} height={300} />
     </Link>
   );
 }

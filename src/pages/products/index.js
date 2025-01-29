@@ -1,7 +1,13 @@
 import Button from '@/components/atoms/Button';
 import CardProduct from '@/components/molecules/CardProduct';
 import Image from 'next/image';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { data } from '@/constant/products';
 // import { BackToTopButton } from "@/components/atoms/Icons/BackToTopButton";
 import Icons from '@/components/atoms/Icons';
@@ -43,15 +49,18 @@ const ProductPage = () => {
   };
 
   /**
-   * useMemo : hooks untuk menyimpan hasil komputasi/perhitungan yang kompleks ke dalam cache , 
-   * tujuannya agar fungsi tersebut tidak perlu dijalankan/dihitung ulang ketika tidak ada perubahan pada state.
+   * useCallBack : hook buat nyimpen fungsi kedalam cache,
+   * tujuannya biar fungsi tersebut tidak perlu dijalakan ulang ketika tidak ada perubahan pada nilainya
    */
-  const cartTotal = useMemo(() => {
-      return cart.reduce((total, item) => {
+  const calculateTotal = useCallback(() => {
+    return cart.reduce((total, item) => {
       const product = data.find((product) => product.id === item.id);
       return total + product.price * item.qty;
     }, 0);
   }, [cart]);
+
+  //memanggil fungsi buat dapetin nilai.
+  const cartTotal = calculateTotal();
 
   useEffect(() => {
     if (cart.length > 0) {
@@ -63,6 +72,7 @@ const ProductPage = () => {
       localStorage.setItem('cart', JSON.stringify(cart));
     }
   }, [cart]);
+
 
   useEffect(() => {
     function handleScroll() {
