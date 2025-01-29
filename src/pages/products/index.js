@@ -1,8 +1,10 @@
 import Button from "@/components/atoms/Button";
 import CardProduct from "@/components/molecules/CardProduct";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { data } from '@/constant/products';
+// import { BackToTopButton } from "@/components/atoms/Icons/BackToTopButton";
+import Icons from '@/components/atoms/Icons';
 
 const ProductPage = () => {
 
@@ -11,6 +13,12 @@ const ProductPage = () => {
   const [username, setUsername] = useState("");
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
+  const footerRef = useRef();
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  /**
+   * useRef hook untuk membuat referensi ke element DOM 
+   * / fungsi untuk mengakses element DOM
+   */
 
   // useState sebutan variabel di react. 
   // useEffect untuk menangani side effect dari perubahan suatu data, yang dijalankan tiap kali halaman di load/refresh/render.
@@ -34,7 +42,6 @@ const ProductPage = () => {
     }
 
   };
-  console.log(cart);
   useEffect(() => {
     if (cart.length > 0) {
       const sumTotal = cart.reduce((total, item) => {
@@ -48,6 +55,31 @@ const ProductPage = () => {
 
   }, [cart]);
 
+  useEffect(() => {
+    function handleScroll() {
+      console.log(footerRef);
+
+      //nambil nilai offsetTop (posisi vertikal dari element footer yang ddi referensikan oleh footerRef)
+      const footerTop = footerRef.current.offsetTop; // mengambil batas atas komponen.
+      const viewportHeight = window.innerHeight; // mengambil tinggi innerHeight dari object window  (tinggi viewport tanpa toolbar & scrllbar)
+      const scrollPosition = window.scrollY; //mengambil nilai scrollY dari object window (posisi scroll vertikal - sumbuY di layar)
+
+      // logic untuk mengecek apakah posisi scroll dilayar telah mencapai element footer
+      if (scrollPosition + viewportHeight >= footerTop) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+
+      //event listener untuk jalanin fungsi handleScroll setiap even scroll terjadi
+    }
+    window.addEventListener("scroll", handleScroll);
+
+    // unmount;
+    return () => removeEventListener("scroll", handleScroll);
+  }, [footerRef]);
+
+
 
 
   // e,h handler untuk menjalankan fungsi logout dan menghapus data username & password dari localstorage.
@@ -56,6 +88,10 @@ const ProductPage = () => {
     localStorage.removeItem('password');
     localStorage.removeItem('cart');
     window.location.href = "/login";
+  }
+
+  function handleBackToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
@@ -115,6 +151,11 @@ const ProductPage = () => {
           </div>
         }
       </div>
+      {/* Footer */}
+      {showBackToTop && (
+        <div onClick={handleBackToTop} className="fixed bottom-20 right-5 bg-gradient-hover p-2 rounded-full"><Icons.DoubleArrowUp /></div>)
+      }
+      <footer ref={footerRef} className="text-center p-5 bg-black text-white w-full">All right reserved &copy; || by Maruf</footer>
     </>
   );
 };
