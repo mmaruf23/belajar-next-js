@@ -26,7 +26,7 @@ function Body({ title, desc }) {
     <div className='px-5 pb-5'>
       <Link href="#">
         <h3 className='text-3xl font-bold text-slate-300'>{title}</h3>
-        <p className='mt-3 text-slate-700 text-base text-justify h-20'>{desc}</p>
+        <p className='mt-3 text-slate-700 text-base text-justify w-56 h-20'>{desc}</p>
       </Link>
     </div>
   )
