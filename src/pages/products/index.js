@@ -1,63 +1,60 @@
 import Button from "@/components/atoms/Button";
 import CardProduct from "@/components/molecules/CardProduct";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
-const data = [
-  {
-    id: 1,
-    image: "/images/image.png",
-    title: "Odeng 1",
-    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusamus, impedit.",
-    price: 2000
-  },
-  {
-    id: 2,
-    image: "/images/image.png",
-    title: "Odeng 1",
-    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusamus, impedit.",
-    price: 4000
-  },
-  {
-    id: 3,
-    image: "/images/image.png",
-    title: "Odeng 1",
-    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusamus, impedit.",
-    price: 2500
-  },
-  {
-    id: 4,
-    image: "/images/image.png",
-    title: "Odeng 1",
-    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusamus, impedit.",
-    price: 2300
-  },
-  {
-    id: 5,
-    image: "/images/image.png",
-    title: "Odeng 1",
-    description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Accusamus, impedit.",
-    price: 3000
-  },
-];
-
+import { data } from '@/constant/products';
 
 const ProductPage = () => {
 
 
-  const [username, setUsername] = useState("");
-  // useState sebutan variabel di react. 
 
+  const [username, setUsername] = useState("");
+  const [cart, setCart] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  // useState sebutan variabel di react. 
   // useEffect untuk menangani side effect dari perubahan suatu data, yang dijalankan tiap kali halaman di load/refresh/render.
   useEffect(() => {
     const getUsername = localStorage.getItem("username");
     if (getUsername) {
       setUsername(getUsername);
     }
+
+    setCart(JSON.parse(localStorage.getItem("cart")) || []);
   }, []); // [] : dependensi array, kalau kurung kosong buat mastiin useEffect hanya dijalankan sekali saat halaman dirender. // kalau ada state didalam dapendensi array maka fungsi untuk memantau perubahan di state tersebut.
+
+  // fungsi untuk menambahkan produk ke cart
+  const handleAddToCart = (id) => {
+
+    // logic untuk mengecek kalau produk dengan id yang sama akan menambahkan qty saja jika tidak akan menambahkan item baru
+    if (cart.find((item) => item.id === id)) {
+      setCart(cart.map((item) => item.id === id ? { ...item, qty: item.qty + 1 } : item));
+    } else {
+      setCart([...cart, { id, qty: 1 }]);
+    }
+
+  };
+  console.log(cart);
+  useEffect(() => {
+    if (cart.length > 0) {
+      const sumTotal = cart.reduce((total, item) => {
+        const product = data.find((product) => product.id === item.id);
+        return total + product.price * item.qty;
+      }, 0);
+      setTotal(sumTotal);
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+
+  }, [cart]);
+
+
 
   // e,h handler untuk menjalankan fungsi logout dan menghapus data username & password dari localstorage.
   function handleLogout() {
     localStorage.removeItem('username');
     localStorage.removeItem('password');
+    localStorage.removeItem('cart');
     window.location.href = "/login";
   }
 
@@ -68,24 +65,55 @@ const ProductPage = () => {
         <h1>Hi, {username}</h1>
         <Button onClick={handleLogout} buttonClassname="bg-red-500 hover:bg-red-800">Logout</Button>
       </div>
-      <div className="flex justify-center items-center min-h-screen gap-2">
-        <CardProduct>
-          <CardProduct.Header image={'/images/image.png'} />
-          <CardProduct.Body
-            title={'Odeng'}
-            desc="Lorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsum"
-          />
-          <CardProduct.Footer price={'2000'} />
-        </CardProduct>
 
-        {/* rendering list : teknik menampilkan beberapa element ui tertentu berdasarkan data dinamis yang didimpan dedalam sebuah json / api*/}
-        {data.map((item) => (
-          <CardProduct key={item.id}>
-            <CardProduct.Header image={item.image} />
-            <CardProduct.Body title={item.title} desc={item.description} />
-            <CardProduct.Footer price={item.price} />
-          </CardProduct>
-        ))}
+      <div className="flex px-5 py-8">
+        {/* Product */}
+        <div className="flex flex-col">
+          <h1 className="text-3xl font-bold text-blue-500 uppercase mb-4">
+            Products
+          </h1>
+          <div className="flex flex-wrap gap-4">
+            {data.map((item) => (
+              <CardProduct key={item.id}>
+                <CardProduct.Header image={item.image} />
+                <CardProduct.Body title={item.title} desc={item.description} />
+                <CardProduct.Footer price={item.price} handleAddToCart={handleAddToCart} id={item.id} />
+              </CardProduct>
+            ))}
+          </div>
+        </div>
+        {/* cart */}
+        {cart.length > 0 &&
+          <div className="w-2/6">
+            <h1 className="text-3xl font-bold text-blue-500 mb-4 uppercase">Cart</h1>
+            <div className="flex flex-col gap-2">
+              {cart.map((item) => {
+                const datas = data.find((data) => data.id === item.id);
+                return (
+                  <div className="flex p-4 border rounded-lg" key={item.id}>
+                    <Image className="rounded" width={100} height={100} src={datas.image} alt="cart image" />
+                    <div className="flex justify-between w-full">
+                      <div className="flex flex-col justify-between ml-3">
+                        <span className="font-bold text-xl">{datas.title}</span>
+                        <span className="font-semibold">{datas.price}</span>
+                      </div>
+                      <div className="flex flex-col justify-center items-center">
+                        <span className="mb-1">Qty</span>
+                        <span className="flex justify-center items-center font-semibold p-2 border rounded-sm text-center w-10 h-10">{item.qty}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              <div className="flex justify-between px-4 py-2 border mt-2 font-semibold rounded-lg">
+                <span>Total</span>
+                <span>{total}</span>
+              </div>
+
+            </div>
+          </div>
+        }
       </div>
     </>
   );

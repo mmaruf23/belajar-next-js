@@ -26,16 +26,16 @@ function Body({ title, desc }) {
     <div className='px-5 pb-5'>
       <Link href="#">
         <h3 className='text-3xl font-bold text-slate-300'>{title}</h3>
-        <p className='mt-3 text-slate-700 text-base text-justify'>{desc}</p>
+        <p className='mt-3 text-slate-700 text-base text-justify h-20'>{desc}</p>
       </Link>
     </div>
   )
 }
-function Footer({ price }){
+function Footer({ price, handleAddToCart, id }){
   return (
     <div className='flex flex-col items-center justify-center px-5 pb-5'>
       <span className='text-2xl font-semibold mb-2'>{price}</span>
-      <Button buttonClassname="bg-gradient-aigen w-full text-white">Beli</Button>
+      <Button buttonClassname="bg-gradient-aigen w-full text-white" onClick={() => handleAddToCart(id)}>Beli</Button>
     </div>
   )
 }

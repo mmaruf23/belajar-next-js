@@ -23,7 +23,7 @@ const AuthLayout = ({ title, desc, children, type = 'register' }) => {
             <p className="text-sm text-center mt-2 text-red-500">
               Already have an account?{' '}
               <Link className="text-blue-500 hover:text-blue-700" href="/login">
-                Register
+                Login
               </Link>
             </p>
           ) : (
