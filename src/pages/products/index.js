@@ -216,10 +216,8 @@ const ProductPage = ({ data }) => {
 
 
 /**
- * SSG : teknik yang merender halaman pada saat build (npm run build)
- * bisa di cache 
- * BUILD TIME : proses penyiapan aplikasi disisi server 
- * RUN TIME : 
+ * ISR : gabungan ssr dan ssg
+ * dimana halaman akan ditampilkan secara static namun datatnya bisa diupdate secara dinamis jika ada perubahan data.
  * 
  */
 export async function getStaticProps() {
@@ -231,6 +229,7 @@ export async function getStaticProps() {
       props: {
         data: products.slice(0, 8) || [],
       },
+      revalidate: 60, // fungsi untuk merefresh/mengupdate data setelah 60 detik.
     };
   } catch (error) {
     console.log(error);
