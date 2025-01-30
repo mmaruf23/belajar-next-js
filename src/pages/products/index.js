@@ -11,12 +11,13 @@ import { useRouter } from 'next/router';
 import { useLogin } from '@/hooks/useLogin';
 import { formatCurrency } from '@/helpers/util/formatCurrency';
 
-const ProductPage = () => {
+const ProductPage = ({ data }) => {
   // const [username, setUsername] = useState('');
   const [cart, setCart] = useState([]);
   // const [total, setTotal] = useState(0);
   const footerRef = useRef();
   const [showBackToTop, setShowBackToTop] = useState(false);
+  // const [data, setData] = useState([]); //SSR sudah tidak perlu ini
   const router = useRouter();
   const username = useLogin();
 
@@ -25,21 +26,7 @@ const ProductPage = () => {
    * / fungsi untuk mengakses element DOM
    */
 
-  const [data, setData] = useState([]);
-  // menggunakan useEffect untuk mengambil data dari API : service products
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        console.log(data);
-
-        setData(data.slice(0, 8));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchProducts();
-  }, []);
+  // menggunakan useEffect untuk mengambil data dari API
 
   // useState sebutan variabel di react.
   // useEffect untuk menangani side effect dari perubahan suatu data, yang dijalankan tiap kali halaman di load/refresh/render.
@@ -74,7 +61,7 @@ const ProductPage = () => {
    */
   const calculateTotal = useCallback(() => {
     return cart.reduce((total, item) => {
-      const product = data.find((product) => product.id === item.id);
+      const product = data?.find((product) => product.id === item.id);
       return total + product?.price * item.qty;
     }, 0);
   }, [cart, data]);
@@ -169,7 +156,7 @@ const ProductPage = () => {
             </h1>
             <div className="flex flex-col gap-2">
               {cart?.map((item) => {
-                const datas = data.find((data) => data.id === item.id);
+                const datas = data?.find((data) => data.id === item.id);
                 return (
                   <div className="flex p-4 border rounded-lg" key={item.id}>
                     <Image
@@ -184,7 +171,9 @@ const ProductPage = () => {
                         <span className="font-bold text-xl line-clamp-2">
                           {datas?.title}
                         </span>
-                        <span className="font-semibold">{formatCurrency(datas?.price, "en-US", "USD")}</span>
+                        <span className="font-semibold">
+                          {formatCurrency(datas?.price, 'en-US', 'USD')}
+                        </span>
                       </div>
                       <div className="flex flex-col justify-center items-center">
                         <span className="mb-1">Qty</span>
@@ -199,7 +188,7 @@ const ProductPage = () => {
 
               <div className="flex justify-between px-4 py-2 border mt-2 font-semibold rounded-lg">
                 <span>Total</span>
-                <span>{formatCurrency(cartTotal, "en-US", "USD")}</span>
+                <span>{formatCurrency(cartTotal, 'en-US', 'USD')}</span>
               </div>
             </div>
           </div>
@@ -223,5 +212,29 @@ const ProductPage = () => {
     </>
   );
 };
+
+
+
+/**
+ * SSG : teknik yang merender halaman pada saat build (npm run build)
+ * bisa di cache 
+ * BUILD TIME : proses penyiapan aplikasi disisi server 
+ * RUN TIME : 
+ * 
+ */
+export async function getStaticProps() {
+  try {
+    // const products = await getProducts();
+    const [products] = await Promise.all([getProducts()]);
+
+    return {
+      props: {
+        data: products.slice(0, 8) || [],
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export default ProductPage;
