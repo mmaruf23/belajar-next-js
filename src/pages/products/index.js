@@ -6,6 +6,8 @@ import { data } from '@/constant/products';
 // import { BackToTopButton } from "@/components/atoms/Icons/BackToTopButton";
 import Icons from '@/components/atoms/Icons';
 import { getProducts } from '@/services/products';
+import { getCurrentUser } from '@/services/auth';
+import { useRouter } from 'next/router';
 
 const ProductPage = () => {
   const [username, setUsername] = useState('');
@@ -13,6 +15,7 @@ const ProductPage = () => {
   // const [total, setTotal] = useState(0);
   const footerRef = useRef();
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const router = useRouter();
   /**
    * useRef hook untuk membuat referensi ke element DOM
    * / fungsi untuk mengakses element DOM
@@ -25,21 +28,23 @@ const ProductPage = () => {
       try {
         const data = await getProducts();
         console.log(data);
-        
-        setData(data.slice(0,8));
+
+        setData(data.slice(0, 8));
       } catch (error) {
         console.log(error);
       }
     };
-    fetchProducts()
+    fetchProducts();
   }, []);
 
   // useState sebutan variabel di react.
   // useEffect untuk menangani side effect dari perubahan suatu data, yang dijalankan tiap kali halaman di load/refresh/render.
   useEffect(() => {
-    const getUsername = localStorage.getItem('username');
-    if (getUsername) {
-      setUsername(getUsername);
+    const token = localStorage.getItem('token');
+    if (token) {
+      setUsername(getCurrentUser(token));
+    } else {
+      router.push('/login');
     }
 
     setCart(JSON.parse(localStorage.getItem('cart')) || []);
@@ -110,10 +115,9 @@ const ProductPage = () => {
 
   // e,h handler untuk menjalankan fungsi logout dan menghapus data username & password dari localstorage.
   function handleLogout() {
-    localStorage.removeItem('username');
-    localStorage.removeItem('password');
+    localStorage.removeItem('token');
     localStorage.removeItem('cart');
-    window.location.href = '/login';
+    router.push('login');
   }
 
   function handleBackToTop() {
@@ -173,7 +177,9 @@ const ProductPage = () => {
                     />
                     <div className="flex justify-between w-full">
                       <div className="flex flex-col justify-between ml-3">
-                        <span className="font-bold text-xl line-clamp-2">{datas?.title}</span>
+                        <span className="font-bold text-xl line-clamp-2">
+                          {datas?.title}
+                        </span>
                         <span className="font-semibold">{datas?.price}</span>
                       </div>
                       <div className="flex flex-col justify-center items-center">

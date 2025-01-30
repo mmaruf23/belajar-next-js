@@ -1,18 +1,36 @@
 import Button from '@/components/atoms/Button';
 import InputForm from '@/components/molecules/InputForm';
-import React from 'react';
+import { login } from '@/services/auth';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 
 const Login = () => {
-  function handleLogin(event) {
+  const [errorLogin, setErrorLogin] = useState('');
+  const router = useRouter();
+  async function handleLogin(event) {
     event.preventDefault();
-    console.log('Klik button!');
 
-    //simpan data form ke localStorage - browser.
-    
-    localStorage.setItem('username', event.target.username.value);
-    localStorage.setItem('password', event.target.password.value);
+    const payload = {
+      username: event.target.username.value, //johnd
+      password: event.target.password.value, // m38rmF$
+    };
 
-    window.location.href = '/products';
+    try {
+      const res = await login(payload);
+      console.log(res);
+
+      if (res.status) {
+        localStorage.setItem('token', res.token);
+        // window.location.href = '/products';
+        router.push('/products');
+      } else {
+        console.log('Login error : ', res.error.response.data);
+        setErrorLogin(res.error.response.data);
+      }
+    } catch (error) {
+      console.log('Login failed : ', error);
+      setErrorLogin(res.error.response.data);
+    }
   }
   return (
     <form onSubmit={handleLogin}>
@@ -34,6 +52,7 @@ const Login = () => {
       >
         Login
       </Button>
+      {errorLogin && <p className='mt-4 text-center text-sm text-red-500'>{errorLogin}</p>}
     </form>
   );
 };
