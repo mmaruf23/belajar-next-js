@@ -6,16 +6,20 @@ import { data } from '@/constant/products';
 // import { BackToTopButton } from "@/components/atoms/Icons/BackToTopButton";
 import Icons from '@/components/atoms/Icons';
 import { getProducts } from '@/services/products';
-import { getCurrentUser } from '@/services/auth';
+// import { getCurrentUser } from '@/services/auth';
 import { useRouter } from 'next/router';
+import { useLogin } from '@/hooks/useLogin';
+import { formatCurrency } from '@/helpers/util/formatCurrency';
 
 const ProductPage = () => {
-  const [username, setUsername] = useState('');
+  // const [username, setUsername] = useState('');
   const [cart, setCart] = useState([]);
   // const [total, setTotal] = useState(0);
   const footerRef = useRef();
   const [showBackToTop, setShowBackToTop] = useState(false);
   const router = useRouter();
+  const username = useLogin();
+
   /**
    * useRef hook untuk membuat referensi ke element DOM
    * / fungsi untuk mengakses element DOM
@@ -40,12 +44,12 @@ const ProductPage = () => {
   // useState sebutan variabel di react.
   // useEffect untuk menangani side effect dari perubahan suatu data, yang dijalankan tiap kali halaman di load/refresh/render.
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setUsername(getCurrentUser(token));
-    } else {
-      router.push('/login');
-    }
+    // const token = localStorage.getItem('token');
+    // if (token) {
+    //   setUsername(getCurrentUser(token));
+    // } else {
+    //   router.push('/login');
+    // }
 
     setCart(JSON.parse(localStorage.getItem('cart')) || []);
   }, []); // [] : dependensi array, kalau kurung kosong buat mastiin useEffect hanya dijalankan sekali saat halaman dirender. // kalau ada state didalam dapendensi array maka fungsi untuk memantau perubahan di state tersebut.
@@ -180,7 +184,7 @@ const ProductPage = () => {
                         <span className="font-bold text-xl line-clamp-2">
                           {datas?.title}
                         </span>
-                        <span className="font-semibold">{datas?.price}</span>
+                        <span className="font-semibold">{formatCurrency(datas?.price, "en-US", "USD")}</span>
                       </div>
                       <div className="flex flex-col justify-center items-center">
                         <span className="mb-1">Qty</span>
@@ -195,7 +199,7 @@ const ProductPage = () => {
 
               <div className="flex justify-between px-4 py-2 border mt-2 font-semibold rounded-lg">
                 <span>Total</span>
-                <span>{cartTotal}</span>
+                <span>{formatCurrency(cartTotal, "en-US", "USD")}</span>
               </div>
             </div>
           </div>
