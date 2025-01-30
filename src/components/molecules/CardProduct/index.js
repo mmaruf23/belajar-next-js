@@ -1,4 +1,5 @@
 import Button from '@/components/atoms/Button';
+import { formatCurrency } from '@/helpers/util/formatCurrency';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -34,7 +35,7 @@ function Body({ title, desc }) {
 function Footer({ price, handleAddToCart, id }){
   return (
     <div className='flex flex-col items-center justify-center px-5 pb-5 mt-auto'>
-      <span className='text-2xl font-semibold mb-2'>{price}</span>
+      <span className='text-2xl font-semibold mb-2'>{formatCurrency(price, "en-US", "USD")}</span>
       <Button buttonClassname="bg-gradient-aigen w-full text-white" onClick={() => handleAddToCart(id)}>Beli</Button>
     </div>
   )

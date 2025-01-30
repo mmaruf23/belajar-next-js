@@ -4,10 +4,10 @@
 
 @layer components {
     .bg-gradient-aigen {
-        @apply bg-gradient-to-r from-red-500 via-yellow-500 to-green-500
+        @apply bg-gradient-to-r from-black via-gray-500 to-green-500
     }
 
     .bg-gradient-hover {
-        @apply bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 hover:from-green-500 hover:via-yellow-500 hover:to-red-500
+        @apply bg-gradient-to-r from-black via-gray-500 to-green-500 hover:from-green-500 hover:via-gray-500 hover:to-black
     }
 }
