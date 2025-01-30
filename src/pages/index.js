@@ -1,11 +1,14 @@
+import { isMobileScreenAtom } from '@/atoms/atoms';
 import { useLogin } from '@/hooks/useLogin';
+import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export default function Home() {
   const [data, setData] = useState(true);
   const username = useLogin();
-  const { isMobileScreen } = useSelector((state) => state.screen);
+  // const { isMobileScreen } = useSelector((state) => state.screen);
+  const [isMobileScreen] = useAtom(isMobileScreenAtom);
   console.log("mobile : ", isMobileScreen);
    
   
@@ -36,7 +39,7 @@ export default function Home() {
         ) : (
           <h1 className="text-6xl font-bold">Updated Data</h1>
         )}
-        {isMobileScreen && <p className="text-3xl font-bold">Ini Mobile</p>}
+        {isMobileScreen && <p className="text-3xl font-bold text-red-500">Ini Mobile</p>}
         <button
           onClick={handleChange}
           className="mt-10 px-20 py-10 bg-blue-500 hover:bg-blue-900 text-white text-3xl font-bold rounded-xl"
