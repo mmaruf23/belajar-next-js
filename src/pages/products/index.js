@@ -6,10 +6,14 @@ import { data } from '@/constant/products';
 // import { BackToTopButton } from "@/components/atoms/Icons/BackToTopButton";
 import Icons from '@/components/atoms/Icons';
 import { getProducts } from '@/services/products';
-// import { getCurrentUser } from '@/services/auth';
+import { getCurrentUser } from '@/services/auth';
 import { useRouter } from 'next/router';
 import { useLogin } from '@/hooks/useLogin';
 import { formatCurrency } from '@/helpers/util/formatCurrency';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUsername } from '../screenSlice/screenSlice';
+
+
 
 const ProductPage = ({data}) => {
   // const [username, setUsername] = useState('');
@@ -19,7 +23,10 @@ const ProductPage = ({data}) => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   // const [data, setData] = useState([]); //SSR sudah tidak perlu ini
   const router = useRouter();
-  const username = useLogin();
+  // const username = useLogin();
+  const dispatch = useDispatch();
+  const { isLargeScreen, username } = useSelector((state) => state.screen);
+
 
   /**
    * useRef hook untuk membuat referensi ke element DOM
@@ -31,12 +38,12 @@ const ProductPage = ({data}) => {
   // useState sebutan variabel di react.
   // useEffect untuk menangani side effect dari perubahan suatu data, yang dijalankan tiap kali halaman di load/refresh/render.
   useEffect(() => {
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   setUsername(getCurrentUser(token));
-    // } else {
-    //   router.push('/login');
-    // }
+    const token = localStorage.getItem('token');
+    if (token) {
+      dispatch(setUsername(getCurrentUser(token)));
+    } else {
+      router.push('/login');
+    }
 
     setCart(JSON.parse(localStorage.getItem('cart')) || []);
   }, []); // [] : dependensi array, kalau kurung kosong buat mastiin useEffect hanya dijalankan sekali saat halaman dirender. // kalau ada state didalam dapendensi array maka fungsi untuk memantau perubahan di state tersebut.
@@ -112,7 +119,12 @@ const ProductPage = ({data}) => {
   }
 
   function handleBackToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    isLargeScreen ?
+    window.scrollTo({ top: 0, behavior: 'smooth' }) :
+    window.scrollTo({ top: 700, behavior: 'smooth' })
+
+    
+    ;
   }
 
   return (
@@ -120,6 +132,7 @@ const ProductPage = ({data}) => {
     <>
       <div className="flex justify-between items-center bg-black text-white font-bold px-5 py-4">
         <h1>Hi, {username}</h1>
+        {isLargeScreen ? <p>Ini Desktop</p> : <p>Ini Mobile</p>}
         <Button
           onClick={handleLogout}
           buttonClassname="bg-red-500 hover:bg-red-800"
