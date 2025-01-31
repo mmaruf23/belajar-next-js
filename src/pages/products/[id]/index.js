@@ -19,7 +19,7 @@ const ProductDetailPage = ({ detailProducts }) => {
    * isValidating : status validasi ulang data (perbarui data)
    */
   const api = process.env.NEXT_PUBLIC_API;
-  const { data } = useSWR(
+  const { data, error, isLoading, isValidating } = useSWR(
     `${api}/products/${detailProducts?.id}`,
     async () => {
       const res = await axios.get(`${api}/products/${detailProducts?.id}`);
@@ -27,8 +27,12 @@ const ProductDetailPage = ({ detailProducts }) => {
     },
     {
       initialData: detailProducts,
+      refreshInterval: 1000,
     }
   );
+
+  if (error) return <div className='h-screen text-5xl text-center'> gagal mengambil data</div>
+  if (isLoading) return <div className='h-screen text-5xl text-center'> sedang memuat data</div>
 
   return (
     <>
@@ -41,6 +45,7 @@ const ProductDetailPage = ({ detailProducts }) => {
           <p className="text-white font-semibold mt-5">{data?.description}</p>
           <p className="text-white text-xl font-bold mt-5">{formatCurrency(detailProducts.price * 5, "en-US", "USD")}</p>
         </div>
+        {isValidating && <p className='text-white font-bold text-6xl mt-4'>Sedang memperbarui data...</p>}
       </div>
     </>);
 };
