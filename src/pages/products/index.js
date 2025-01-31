@@ -13,9 +13,7 @@ import { formatCurrency } from '@/helpers/util/formatCurrency';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUsername } from '../screenSlice/screenSlice';
 
-
-
-const ProductPage = ({data}) => {
+const ProductPage = ({ data }) => {
   // const [username, setUsername] = useState('');
   const [cart, setCart] = useState([]);
   // const [total, setTotal] = useState(0);
@@ -26,7 +24,6 @@ const ProductPage = ({data}) => {
   // const username = useLogin();
   const dispatch = useDispatch();
   const { isLargeScreen, username } = useSelector((state) => state.screen);
-
 
   /**
    * useRef hook untuk membuat referensi ke element DOM
@@ -119,12 +116,9 @@ const ProductPage = ({data}) => {
   }
 
   function handleBackToTop() {
-    isLargeScreen ?
-    window.scrollTo({ top: 0, behavior: 'smooth' }) :
-    window.scrollTo({ top: 700, behavior: 'smooth' })
-
-    
-    ;
+    isLargeScreen
+      ? window.scrollTo({ top: 0, behavior: 'smooth' })
+      : window.scrollTo({ top: 700, behavior: 'smooth' });
   }
 
   return (
@@ -150,8 +144,15 @@ const ProductPage = ({data}) => {
           <div className="flex flex-wrap gap-4">
             {data?.map((item) => (
               <CardProduct key={item.id}>
-                <CardProduct.Header image={item.image} />
-                <CardProduct.Body title={item.title} desc={item.description} />
+                <CardProduct.Header
+                  image={item.image}
+                  link={`/products/${item.id}`}
+                />
+                <CardProduct.Body
+                  title={item.title}
+                  desc={item.description}
+                  link={`/products/${item.id}`}
+                />
                 <CardProduct.Footer
                   price={item.price}
                   handleAddToCart={handleAddToCart}
@@ -226,20 +227,19 @@ const ProductPage = ({data}) => {
   );
 };
 
-
 /**
  * Fungsi untuk mengambil data disisi server sebelum akhirnya dirender ke HTML
- * 
+ *
  */
 export async function getServerSideProps() {
   // cara pertama untuk memanggil service satu persatu.
   try {
     // const products = await getProducts();
-    const [products] = await Promise.all([getProducts()])
+    const [products] = await Promise.all([getProducts()]);
 
     return {
       props: {
-        data: products.slice(0,8) || [],
+        data: products.slice(0, 8) || [],
       },
     };
   } catch (error) {
